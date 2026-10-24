@@ -1,0 +1,489 @@
+<Window x:Class="NekoM550D.Monitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="Neko M550D — Seri Monitör"
+        Width="1000" Height="640"
+        MinWidth="900" MinHeight="580"
+        WindowStartupLocation="CenterScreen"
+        Background="#0F1115"
+        Foreground="#F1F5F9"
+        FontFamily="Segoe UI"
+        TextOptions.TextFormattingMode="Display"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="Bg" Color="#0F1115"/>
+        <SolidColorBrush x:Key="Card" Color="#171A21"/>
+        <SolidColorBrush x:Key="Line" Color="#262B36"/>
+        <SolidColorBrush x:Key="Fg" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="Muted" Color="#94A3B8"/>
+        <SolidColorBrush x:Key="Accent" Color="#34D399"/>
+        <SolidColorBrush x:Key="AccentDark" Color="#10B981"/>
+        <SolidColorBrush x:Key="ActiveBg" Color="#153A30"/>
+        <SolidColorBrush x:Key="Neutral" Color="#1F242E"/>
+        <SolidColorBrush x:Key="Warn" Color="#FBBF24"/>
+        <SolidColorBrush x:Key="Danger" Color="#F87171"/>
+        <SolidColorBrush x:Key="OnAccent" Color="#06130F"/>
+
+        <Style x:Key="BaseButton" TargetType="Button">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Background" Value="{StaticResource Neutral}"/>
+            <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.90"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.76"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.38"/>
+                                <Setter Property="Cursor" Value="Arrow"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ConnectButton" TargetType="Button" BasedOn="{StaticResource BaseButton}">
+            <Setter Property="Background" Value="{StaticResource AccentDark}"/>
+            <Setter Property="Foreground" Value="{StaticResource OnAccent}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="ModeButton" TargetType="Button" BasedOn="{StaticResource BaseButton}">
+            <Setter Property="Width" Value="92"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Background" Value="{StaticResource Neutral}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="BatteryBar" TargetType="ProgressBar">
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Foreground" Value="{StaticResource Accent}"/>
+            <Setter Property="Background" Value="{StaticResource Line}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                ClipToBounds="True">
+                            <Grid>
+                                <Border x:Name="PART_Track"/>
+                                <Border x:Name="PART_Indicator"
+                                        Background="{TemplateBinding Foreground}"
+                                        CornerRadius="5"
+                                        HorizontalAlignment="Left"/>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkCombo" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+            <Setter Property="Background" Value="{StaticResource Neutral}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Line}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Focusable="False"
+                                          ClickMode="Press"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="Bd"
+                                                Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                BorderThickness="1"
+                                                CornerRadius="9">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="28"/>
+                                                </Grid.ColumnDefinitions>
+                                                <ContentPresenter Margin="10,0,0,0"
+                                                                  VerticalAlignment="Center"
+                                                                  HorizontalAlignment="Left"
+                                                                  Content="{Binding SelectionBoxItem, RelativeSource={RelativeSource AncestorType=ComboBox}}"
+                                                                  ContentTemplate="{Binding SelectionBoxItemTemplate, RelativeSource={RelativeSource AncestorType=ComboBox}}"/>
+                                                <Path Grid.Column="1"
+                                                      Data="M 0 0 L 4 4 L 8 0"
+                                                      Stroke="{StaticResource Muted}"
+                                                      StrokeThickness="1.4"
+                                                      HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Opacity" Value="0.90"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource Accent}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade">
+                                <Border Background="{StaticResource Card}"
+                                        BorderBrush="{StaticResource Line}"
+                                        BorderThickness="1"
+                                        CornerRadius="9"
+                                        Margin="0,4,0,0"
+                                        MinWidth="{TemplateBinding ActualWidth}"
+                                        Padding="0,4">
+                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource Fg}"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Bd"
+                                Background="Transparent"
+                                CornerRadius="6"
+                                Margin="4,2"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource ActiveBg}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource ActiveBg}"/>
+                                <Setter Property="Foreground" Value="{StaticResource Accent}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource Bg}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Üst çubuk -->
+        <Border Grid.Row="0"
+                BorderBrush="{StaticResource Line}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Neko M550D"
+                               FontSize="22"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource Fg}"/>
+                    <TextBlock Text="Seri Monitör · v0.1"
+                               FontSize="12"
+                               Foreground="{StaticResource Muted}"
+                               Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <Ellipse x:Name="StatusDot"
+                             Width="9" Height="9"
+                             Fill="{StaticResource Muted}"
+                             Margin="0,0,8,0"/>
+                    <TextBlock x:Name="ConnectionText"
+                               Text="Bağlı değil"
+                               Foreground="{StaticResource Muted}"
+                               VerticalAlignment="Center"
+                               Margin="0,0,16,0"/>
+                    <ComboBox x:Name="PortCombo"
+                              Style="{StaticResource DarkCombo}"
+                              Width="118" Height="36"
+                              VerticalContentAlignment="Center"/>
+                    <Button x:Name="RefreshButton"
+                            Content="⟳"
+                            Style="{StaticResource BaseButton}"
+                            Width="40" Height="36"
+                            Padding="0"
+                            FontSize="16"
+                            Margin="8,0,0,0"
+                            ToolTip="Portları yenile"
+                            Click="RefreshButton_Click"/>
+                    <Button x:Name="ConnectButton"
+                            Content="Bağlan"
+                            Style="{StaticResource ConnectButton}"
+                            Width="112" Height="36"
+                            Margin="8,0,0,0"
+                            Click="ConnectButton_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Ana içerik -->
+        <Grid Grid.Row="1" Margin="24,20,24,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Ölçüm kartı -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource Card}"
+                    BorderBrush="{StaticResource Line}"
+                    BorderThickness="1"
+                    CornerRadius="18"
+                    Padding="28">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock x:Name="ModeLabel"
+                               Text="BAĞLI DEĞİL"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource Muted}"/>
+
+                    <StackPanel Grid.Row="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <TextBlock x:Name="ValueText"
+                                   Text="—"
+                                   FontSize="112"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource Fg}"
+                                   Typography.NumeralAlignment="Tabular"/>
+                        <TextBlock x:Name="UnitText"
+                                   Text=""
+                                   FontSize="28"
+                                   Foreground="{StaticResource Muted}"
+                                   VerticalAlignment="Bottom"
+                                   Margin="10,0,0,24"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="2"
+                               x:Name="HintText"
+                               Text="Cihazı bağlayın"
+                               HorizontalAlignment="Center"
+                               FontSize="13"
+                               Foreground="{StaticResource Muted}"
+                               Margin="0,0,0,20"/>
+
+                    <StackPanel Grid.Row="3"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="ModeV"
+                                Content="VOLTAJ"
+                                Tag="V"
+                                Style="{StaticResource ModeButton}"
+                                Click="ModeButton_Click"/>
+                        <Button x:Name="ModeI"
+                                Content="AKIM"
+                                Tag="I"
+                                Style="{StaticResource ModeButton}"
+                                Click="ModeButton_Click"/>
+                        <Button x:Name="ModeD"
+                                Content="DİYOT"
+                                Tag="D"
+                                Style="{StaticResource ModeButton}"
+                                Click="ModeButton_Click"/>
+                        <Button x:Name="ModeM"
+                                Content="MENÜ"
+                                Tag="M"
+                                Style="{StaticResource ModeButton}"
+                                Click="ModeButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Durum kartı -->
+            <Border Grid.Column="2"
+                    Background="{StaticResource Card}"
+                    BorderBrush="{StaticResource Line}"
+                    BorderThickness="1"
+                    CornerRadius="18"
+                    Padding="24">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Text="BATARYA"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource Muted}"/>
+
+                    <StackPanel Grid.Row="1"
+                                Orientation="Horizontal"
+                                Margin="0,10,0,0">
+                        <TextBlock x:Name="BatteryText"
+                                   Text="—"
+                                   FontSize="38"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource Fg}"
+                                   Typography.NumeralAlignment="Tabular"/>
+                        <TextBlock Text="%"
+                                   FontSize="18"
+                                   Foreground="{StaticResource Muted}"
+                                   VerticalAlignment="Bottom"
+                                   Margin="4,0,0,7"/>
+                    </StackPanel>
+
+                    <ProgressBar x:Name="BatteryBar"
+                                 Grid.Row="2"
+                                 Style="{StaticResource BatteryBar}"
+                                 Minimum="0" Maximum="100"
+                                 Value="0"
+                                 Margin="0,12,0,0"/>
+
+                    <TextBlock Grid.Row="4"
+                               Text="HOLD"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource Muted}"
+                               Margin="0,24,0,0"/>
+
+                    <Button x:Name="HoldButton"
+                            Grid.Row="5"
+                            Content="HOLD"
+                            Style="{StaticResource ModeButton}"
+                            Width="Auto"
+                            Height="42"
+                            Margin="0,10,0,0"
+                            HorizontalAlignment="Stretch"
+                            Click="HoldButton_Click"/>
+
+                    <TextBlock Grid.Row="6"
+                               x:Name="HoldStateText"
+                               Text="HOLD kapalı"
+                               FontSize="12"
+                               Foreground="{StaticResource Muted}"
+                               Margin="0,8,0,0"/>
+
+                    <StackPanel Grid.Row="8">
+                        <TextBlock Text="CİHAZ"
+                                   FontSize="11"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource Muted}"/>
+                        <TextBlock x:Name="IdentityText"
+                                   Text="PROTOKOL — · FW —"
+                                   FontSize="12"
+                                   Foreground="{StaticResource Fg}"
+                                   Margin="0,6,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="10"
+                               Text="SON SATIR"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource Muted}"
+                               Margin="0,16,0,0"/>
+
+                    <TextBlock Grid.Row="11"
+                               x:Name="LastLineText"
+                               Text="—"
+                               FontFamily="Consolas"
+                               FontSize="11"
+                               Foreground="{StaticResource Muted}"
+                               Margin="0,6,0,0"
+                               TextTrimming="CharacterEllipsis"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Alt çubuk -->
+        <Border Grid.Row="2"
+                BorderBrush="{StaticResource Line}"
+                BorderThickness="1,0,0,0"
+                Padding="24,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="FooterText"
+                           Text="Hazır"
+                           FontSize="12"
+                           Foreground="{StaticResource Muted}"/>
+                <TextBlock Grid.Column="1"
+                           Text="115200 · 8N1"
+                           FontSize="11"
+                           Foreground="{StaticResource Muted}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

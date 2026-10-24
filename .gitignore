@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+publish/
+.vs/
+*.user
+*.suo
+
+# Arduino
+build/
+*.hex
+*.elf
+
+# Logs and OS files
+*.log
+Thumbs.db
+.DS_Store
