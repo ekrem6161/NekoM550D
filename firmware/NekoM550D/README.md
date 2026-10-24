@@ -1,6 +1,6 @@
 # Neko M550D Firmware
 
-Arduino Uno firmware for the Neko M550D multimeter (v1.2.7).
+Arduino Uno firmware for the Neko M550D multimeter (v1.2.8).
 
 ## Build / upload
 

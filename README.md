@@ -67,7 +67,7 @@ arduino-cli upload -p COM9 --fqbn arduino:avr:uno firmware/NekoM550D
 ```
 
 - `firmware/kalibrasyon/kalibrasyon.ino` is a separate calibration helper sketch.
-- Firmware version: **v1.2.7**.
+- Firmware version: **v1.2.8**.
 
 ## PC monitor
 

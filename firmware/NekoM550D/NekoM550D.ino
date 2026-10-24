@@ -431,6 +431,8 @@ void readBattery() {
         if (!charging) {
           if ((int16_t)battPct - (int16_t)chgRefPct >= 2) {
             charging = true; chgJustOn = true; chgRefPct = battPct;
+          } else if (battPct < chgRefPct) {
+            chgRefPct = battPct;      // desarjda referans asagi takip eder
           }
         } else {
           if ((int16_t)chgRefPct - (int16_t)battPct >= 2) {
@@ -827,7 +829,7 @@ void splashScreen() {
 
   lcd.clear();
   centerPrint(0, "Neko M550D");
-  centerPrint(1, "v1.2.7");
+  centerPrint(1, "v1.2.8");
   delay(700);
 
   // Roleleri sirayla tikla (R1..R4). Her biri kisa sure ceker, birakir.
@@ -976,7 +978,7 @@ void serialCommand(char c) {
     }
 
     case '#':
-      Serial.print(F("#NekoM550D,P1,FW1.2.7\n"));
+      Serial.print(F("#NekoM550D,P1,FW1.2.8\n"));
       break;
 
     case 'M':

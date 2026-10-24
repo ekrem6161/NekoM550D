@@ -1,7 +1,7 @@
 # Neko M550D — Serial Protocol
 
 - **Protocol version:** P1
-- **Firmware:** v1.2.7
+- **Firmware:** v1.2.8
 - **Baud:** 115200, 8N1, ASCII
 - **Line ending:** the device sends `\n`; the PC may send `\n` or `\r\n`
 - **No checksum** (USB serial connection assumed)
@@ -62,7 +62,7 @@ Notes:
 | `M` | Return to menu | Status line |
 | `H` | Toggle HOLD (only in `V`/`I`/`D`) | Status line |
 | `?` | Request current status | Status line |
-| `#` | Device/protocol identity | `#NekoM550D,P1,FW1.2.7\n` |
+| `#` | Device/protocol identity | `#NekoM550D,P1,FW1.2.8\n` |
 
 **Response behavior:**
 
@@ -84,7 +84,7 @@ Notes:
 (port opened; waiting for the first line)
 M,-,63,0
 > #
-#NekoM550D,P1,FW1.2.7
+#NekoM550D,P1,FW1.2.8
 > V
 V,0.00,63,0
 V,12.34,63,0
